@@ -22,7 +22,7 @@ export default function ProductCard({
         <button
           type="button"
           aria-label="Add to favorites"
-          className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-400 shadow-md transition hover:scale-110 hover:text-fuchsia-500"
+          className="absolute z-10 right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-400 shadow-md transition hover:scale-110 hover:text-fuchsia-500 hover:bg-gray-100"
         >
           <FaHeart className="text-lg" />
         </button>
