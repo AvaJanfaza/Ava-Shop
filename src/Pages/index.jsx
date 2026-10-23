@@ -6,3 +6,6 @@ import Home from "./Home";
 import Products from "./Products";
 import ProductDetails from "./ProductDetails";
 import NotFound from "./NotFound";
+
+
+export {About , Auth , Contact , Favorites , Home , Products , ProductDetails , NotFound}

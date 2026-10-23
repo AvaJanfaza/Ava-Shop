@@ -24,7 +24,7 @@ export default function Products() {
 
   if (!products) return <Loading/>
   const filtered = select === "all" ? products : products.filter(pr => pr.category === select);
-  const items = filtered.map(pr => <ProductCard key={pr?.id} title = {pr?.title} description={pr?.description} category={pr?.category} price = {pr?.price} brand={pr?.brand} discountPercentage={pr?.discountPercentage} rating = {pr?.rating} image={pr?.thumbnail}/>)
+  const items = filtered.map(pr => <ProductCard key={pr?.id} id={pr?.id} title = {pr?.title} description={pr?.description} category={pr?.category} price = {pr?.price} brand={pr?.brand} discountPercentage={pr?.discountPercentage} rating = {pr?.rating} image={pr?.thumbnail}/>)
 
   return (
     <div className="min-h-screen px-4 py-8">
@@ -41,7 +41,7 @@ export default function Products() {
         id=""
         value={select}
         onChange={(e) => setSelect(e.target.value)}
-        className="mb-8 block w-full max-w-xs cursor-pointer rounded-xl border border-gray-300 bg-pink-100 px-4 py-3 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:border-pink-400 focus:border-pink-400 focus:outline-none focus:ring-4 focus:ring-indigo-100"
+        className="mb-8 block w-full max-w-xs cursor-pointer rounded-xl border border-violet-200 bg-gradient-to-r from-pink-50 to-violet-50 px-4 py-3 text-sm font-semibold text-violet-800 shadow-md transition duration-200 hover:border-fuchsia-300 hover:shadow-lg focus:border-fuchsia-400 focus:outline-none focus:ring-4 focus:ring-fuchsia-100"
       >
         <option value="all">All</option>
         <option value="beauty">Beauty</option>
