@@ -9,13 +9,13 @@ export default function Home() {
         <Link to={"/products"}>
         <img
           className="block h-full w-full object-cover"
-          src="../assets/banner.gif"
+          src="/assets/banner.gif"
           alt="Home page banner"
         />
         </Link>
       </div>
 
-      <div>
+      <div className='mt-12 px-7'>
         <InfoPanels/>
       </div>
 
