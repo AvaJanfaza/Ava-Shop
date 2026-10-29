@@ -3,7 +3,7 @@ import useFromFields from '../../../Hook/useFromFields'
 import notify from '../../../Utils/notify'
 import AuthContext from '../../../Context/AuthContext'
 import { useContext } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login({ handlePageType }) {
   const [fields,handleChange,setFields] = useFromFields({

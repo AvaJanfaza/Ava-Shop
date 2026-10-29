@@ -1,11 +1,109 @@
+import { useFormik } from 'formik'
 import { FaArrowRight, FaShoppingBag, FaStar } from 'react-icons/fa'
+import * as Yup from 'yup'
+import notify from '../../../Utils/notify'
+import { useNavigate } from 'react-router-dom'
 
-export default function Register({handlePageType}) {
+const validationSchema = Yup.object({
+  firstName: Yup.string()
+    .trim()
+    .required('First name is required.')
+    .min(3, 'First name must be at least 3 characters.')
+    .max(10, 'First name must be 10 characters or fewer.'),
+
+  lastName: Yup.string()
+    .trim()
+    .required('Last name is required.')
+    .min(3, 'Last name must be at least 3 characters.')
+    .max(20, 'Last name must be 20 characters or fewer.'),
+
+  username: Yup.string()
+    .trim()
+    .required('Username is required.')
+    .min(8, 'Username must be at least 8 characters.')
+    .max(15, 'Username must be 15 characters or fewer.')
+    .matches(
+      /^[a-z0-9_-]+$/,
+      'Use only lowercase letters, numbers, underscores, and hyphens.',
+    ),
+
+  email: Yup.string()
+    .trim()
+    .required('Email is required.')
+    .email('Enter a valid email address.'),
+
+  phone: Yup.string()
+    .trim()
+    .required('Phone number is required.')
+    .transform((value) => value?.replace(/[\s()-]/g, ''))
+    .matches(
+      /^(?:09\d{9}|\+989\d{9}|00989\d{9})$/,
+      'Enter a valid Iranian mobile number, such as 09123456789 or +989123456789.',
+    ),
+
+  password: Yup.string()
+    .required('Password is required.')
+    .min(8, 'Password must be at least 8 characters.')
+    .matches(/[A-Z]/, 'Password must include an uppercase letter.')
+    .matches(/[a-z]/, 'Password must include a lowercase letter.')
+    .matches(/[0-9]/, 'Password must include a number.')
+    .matches(
+      /[#?!@$%^&*-]/,
+      'Password must include a special character, such as ! or #.',
+    ),
+
+  confirmPassword: Yup.string()
+    .required('Please confirm your password.')
+    .oneOf([Yup.ref('password')], 'Passwords must match.'),
+
+  terms: Yup.boolean()
+    .oneOf([true], 'You must accept the terms and conditions.')
+    .required('You must accept the terms and conditions.'),
+})
+export default function Register({ handlePageType }) {
+  const navigate = useNavigate();
+
+  const formik = useFormik({
+    initialValues: {
+      firstName: '',
+      lastName: '',
+      username: '',
+      email: '',
+      phone: '',
+      password: '',
+      confirmPassword: '',
+      terms: false,
+    },
+    validationSchema,
+    onSubmit : async (values , {setSubmitting , resetForm}) => {
+      try {
+        const res = await fetch('https://dummyjson.com/users/add', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(values),
+  credentials: 'include'
+});
+if (!res.ok){
+  throw new Error(`Request failed with status ${res.status}`);
+}
+const data = await res.json();
+notify("success" , "Account created successfully");
+resetForm();
+navigate("/");
+      } catch (error) {
+        notify("error" , "The request failed");
+      }
+      finally{
+        setSubmitting(false);
+      }
+    }
+  })
+
   const inputClass =
     'w-full rounded-xl border border-pink-100 bg-pink-50/50 px-4 py-3 text-sm text-violet-900 outline-none transition placeholder:text-violet-400/70 hover:border-pink-200 focus:border-fuchsia-400 focus:bg-white focus:ring-4 focus:ring-fuchsia-500/10'
 
   const labelClass = 'mb-2 block text-sm font-semibold text-violet-900'
-
+  const errorClass = 'mt-1 block text-xs font-medium text-rose-600'
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#fff9fb] px-4 py-10 sm:px-6">
@@ -104,13 +202,16 @@ export default function Register({handlePageType}) {
               Add your details below to get started.
             </p>
 
-            <form className="mt-7 space-y-4">
+            <form className="mt-7 space-y-4" onSubmit={formik.handleSubmit}>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="firstName" className={labelClass}>
                     First name
                   </label>
                   <input
+                    value={formik.values.firstName}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                     id="firstName"
                     name="firstName"
                     type="text"
@@ -118,6 +219,11 @@ export default function Register({handlePageType}) {
                     placeholder="First name"
                     className={inputClass}
                   />
+                  {formik.touched.firstName && formik.errors.firstName && (
+                    <span className={errorClass}>
+                      {formik.errors.firstName}
+                    </span>
+                  )}
                 </div>
 
                 <div>
@@ -125,6 +231,9 @@ export default function Register({handlePageType}) {
                     Last name
                   </label>
                   <input
+                    value={formik.values.lastName}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                     id="lastName"
                     name="lastName"
                     type="text"
@@ -132,6 +241,11 @@ export default function Register({handlePageType}) {
                     placeholder="Last name"
                     className={inputClass}
                   />
+                  {formik.touched.lastName && formik.errors.lastName && (
+                    <span className={errorClass}>
+                      {formik.errors.lastName}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -140,6 +254,9 @@ export default function Register({handlePageType}) {
                   Username
                 </label>
                 <input
+                  value={formik.values.username}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   id="username"
                   name="username"
                   type="text"
@@ -147,6 +264,9 @@ export default function Register({handlePageType}) {
                   placeholder="Choose a username"
                   className={inputClass}
                 />
+                {formik.touched.username && formik.errors.username && (
+                  <span className={errorClass}>{formik.errors.username}</span>
+                )}
               </div>
 
               <div>
@@ -154,6 +274,9 @@ export default function Register({handlePageType}) {
                   Email address
                 </label>
                 <input
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   id="email"
                   name="email"
                   type="email"
@@ -161,6 +284,9 @@ export default function Register({handlePageType}) {
                   placeholder="you@example.com"
                   className={inputClass}
                 />
+                {formik.touched.email && formik.errors.email && (
+                  <span className={errorClass}>{formik.errors.email}</span>
+                )}
               </div>
 
               <div>
@@ -168,6 +294,9 @@ export default function Register({handlePageType}) {
                   Phone number
                 </label>
                 <input
+                  value={formik.values.phone}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   id="phone"
                   name="phone"
                   type="tel"
@@ -175,64 +304,9 @@ export default function Register({handlePageType}) {
                   placeholder="Enter your phone number"
                   className={inputClass}
                 />
-              </div>
-
-              <div>
-                <label htmlFor="address" className={labelClass}>
-                  Street address
-                </label>
-                <input
-                  id="address"
-                  name="address"
-                  type="text"
-                  autoComplete="street-address"
-                  placeholder="House number and street name"
-                  className={inputClass}
-                />
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="city" className={labelClass}>
-                    City
-                  </label>
-                  <input
-                    id="city"
-                    name="city"
-                    type="text"
-                    autoComplete="address-level2"
-                    placeholder="Your city"
-                    className={inputClass}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="postalCode" className={labelClass}>
-                    Postal code
-                  </label>
-                  <input
-                    id="postalCode"
-                    name="postalCode"
-                    type="text"
-                    autoComplete="postal-code"
-                    placeholder="Postal code"
-                    className={inputClass}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="country" className={labelClass}>
-                  Country
-                </label>
-                <input
-                  id="country"
-                  name="country"
-                  type="text"
-                  autoComplete="country-name"
-                  placeholder="Your country"
-                  className={inputClass}
-                />
+                {formik.touched.phone && formik.errors.phone && (
+                  <span className={errorClass}>{formik.errors.phone}</span>
+                )}
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
@@ -241,6 +315,9 @@ export default function Register({handlePageType}) {
                     Password
                   </label>
                   <input
+                    value={formik.values.password}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                     id="password"
                     name="password"
                     type="password"
@@ -248,6 +325,11 @@ export default function Register({handlePageType}) {
                     placeholder="Create a password"
                     className={inputClass}
                   />
+                  {formik.touched.password && formik.errors.password && (
+                    <span className={errorClass}>
+                      {formik.errors.password}
+                    </span>
+                  )}
                 </div>
 
                 <div>
@@ -255,6 +337,9 @@ export default function Register({handlePageType}) {
                     Confirm password
                   </label>
                   <input
+                    value={formik.values.confirmPassword}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                     id="confirmPassword"
                     name="confirmPassword"
                     type="password"
@@ -262,11 +347,20 @@ export default function Register({handlePageType}) {
                     placeholder="Re-enter password"
                     className={inputClass}
                   />
+                  {formik.touched.confirmPassword &&
+                    formik.errors.confirmPassword && (
+                      <span className={errorClass}>
+                        {formik.errors.confirmPassword}
+                      </span>
+                    )}
                 </div>
               </div>
 
               <label className="flex cursor-pointer items-start gap-2 pt-1 text-xs leading-5 text-violet-800/75">
                 <input
+                  checked={formik.values.terms}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   type="checkbox"
                   name="terms"
                   className="mt-1 h-4 w-4 shrink-0 rounded border-pink-300 accent-fuchsia-600"
@@ -287,22 +381,36 @@ export default function Register({handlePageType}) {
                     Privacy Policy
                   </a>
                   .
+                  {formik.touched.terms && formik.errors.terms && (
+                    <span className="mt-1 block text-xs font-medium text-rose-600">
+                      {formik.errors.terms}
+                    </span>
+                  )}
                 </span>
               </label>
 
               <button
+              disabled={formik.isSubmitting || !formik.isValid}
                 type="submit"
                 className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-700 to-fuchsia-600 px-4 py-3.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(139,50,155,0.22)] transition hover:-translate-y-0.5 hover:from-violet-800 hover:to-fuchsia-700 hover:shadow-[0_12px_25px_rgba(139,50,155,0.3)] focus:outline-none focus:ring-4 focus:ring-fuchsia-500/20"
               >
-                Create account
+                {formik.isSubmitting ? "Creating account..." : "Create account"}
                 <FaArrowRight className="text-xs transition group-hover:translate-x-1" />
+              </button>
+
+              <button
+              onClick={() => formik.resetForm()}
+                type="button"
+                className="w-full rounded-xl border border-pink-200 bg-white px-4 py-3 text-sm font-bold text-violet-800 transition hover:border-fuchsia-300 hover:bg-pink-50 focus:outline-none focus:ring-4 focus:ring-fuchsia-500/10"
+              >
+                Reset form
               </button>
             </form>
 
             <p className="mt-6 text-center text-sm text-violet-800/70">
               Already have an account?{' '}
               <button
-                onClick={() => handlePageType("login")}
+                onClick={() => handlePageType('login')}
                 className="font-bold text-fuchsia-700 transition hover:text-violet-900"
               >
                 Log in

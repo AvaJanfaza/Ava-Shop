@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ProductCard from './ProductCard';
 import Loading from '../../Components/Loading';
 
@@ -21,7 +21,6 @@ export default function Products() {
       }
     )();
   } , []);
-
   if (!products) return <Loading/>
   const filtered = select === "all" ? products : products.filter(pr => pr.category === select);
   const items = filtered.map(pr => <ProductCard key={pr?.id} id={pr?.id} title = {pr?.title} description={pr?.description} category={pr?.category} price = {pr?.price} brand={pr?.brand} discountPercentage={pr?.discountPercentage} rating = {pr?.rating} image={pr?.thumbnail}/>)

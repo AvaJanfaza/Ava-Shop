@@ -1,5 +1,5 @@
 import { FaHeart, FaStar } from 'react-icons/fa'
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 
 export default function ProductCard({
   title,

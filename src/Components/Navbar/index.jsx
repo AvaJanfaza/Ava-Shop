@@ -1,8 +1,7 @@
 import { useContext } from 'react'
 import { FaHeart, FaShoppingBag } from 'react-icons/fa'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 import AuthContext from '../../Context/AuthContext'
-
 const links = [
   { label: 'Home', to: '/' },
   { label: 'About', to: '/about' },

@@ -1,7 +1,7 @@
 import React, {useEffect, useState } from 'react'
 
 import Loading from '../../Components/Loading';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import NotFound from '../NotFound';
 
 export default function ProductDetails() {
