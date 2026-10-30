@@ -1,10 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react'
 import ProductCard from './ProductCard';
 import Loading from '../../Components/Loading';
+import gsap from "gsap";
+import {ScrollTrigger} from "gsap/ScrollTrigger"
+import { useGSAP } from '@gsap/react';
+
+gsap.registerPlugin(ScrollTrigger , useGSAP);
 
 export default function Products() {
   const [products , setProducts] = useState(null);
   const [select , setSelect] = useState("all");
+  const container = useRef();
+
 
   useEffect(() => {
     (
@@ -21,10 +28,29 @@ export default function Products() {
       }
     )();
   } , []);
-  if (!products) return <Loading/>
-  const filtered = select === "all" ? products : products.filter(pr => pr.category === select);
-  const items = filtered.map(pr => <ProductCard key={pr?.id} id={pr?.id} title = {pr?.title} description={pr?.description} category={pr?.category} price = {pr?.price} brand={pr?.brand} discountPercentage={pr?.discountPercentage} rating = {pr?.rating} image={pr?.thumbnail}/>)
+  
+  const filtered = !products ? [] : select === "all" ? products : products.filter(pr => pr.category === select);
+  const items = filtered.map(pr => <ProductCard key={pr?.id} id={pr?.id} title = {pr?.title} description={pr?.description} category={pr?.category} price = {pr?.price} brand={pr?.brand} discountPercentage={pr?.discountPercentage} rating = {pr?.rating} image={pr?.thumbnail}/>);
 
+  useGSAP(() => {
+    if (!products) return;
+
+      gsap.set(".product-card" , {opacity : 0 , scale : 0.95});
+  ScrollTrigger.batch(".product-card" , {
+    start : "top 90%",
+    onEnter: (batch) => 
+      gsap.to(batch , {
+        opacity : 1,
+        scale : 1,
+        duration : 0.7,
+        stagger : 0.1,
+        ease : 'power3.out',
+        overwrite : true,
+      })
+  })
+  } , {scope : container , dependencies : [products , select]});
+
+  if (!products) return <Loading/>
   return (
     <div className="min-h-screen px-4 py-8">
       <h1 className="mb-8 text-center text-3xl font-bold text-gray-800">
@@ -58,7 +84,7 @@ export default function Products() {
         <option value="womens-watches">Womens-Watches</option>
       </select>
 
-      <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4'>
+      <div ref={container} className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4'>
         {items}
       </div>
     </div>

@@ -14,7 +14,7 @@ export default function ProductCard({
 }) {
   const navigate = useNavigate();
   return (
-    <div className="group overflow-hidden rounded-3xl border border-pink-100 bg-white shadow-[0_8px_24px_rgba(139,92,246,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(217,70,239,0.16)]">
+    <div className="product-card group overflow-hidden rounded-3xl border border-pink-100 bg-white shadow-[0_8px_24px_rgba(139,92,246,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(217,70,239,0.16)]">
       <div className="relative flex h-56 items-center justify-center overflow-hidden bg-gradient-to-br from-pink-50 via-white to-violet-50 p-6">
         {discountPercentage > 0 && (
           <span className="absolute left-4 top-4 rounded-full bg-fuchsia-500 px-3 py-1 text-xs font-bold text-white shadow-md">
